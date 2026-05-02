@@ -1,0 +1,156 @@
+```latex
+\documentclass[letterpaper,10 pt]{article}
+\usepackage{multicol}
+\usepackage{latexsym}
+\usepackage[empty]{fullpage}
+\usepackage{titlesec}
+\usepackage{marvosym}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{verbatim}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{fancyhdr}
+\usepackage[english]{babel}
+\usepackage{fontawesome} 
+\input{glyphtounicode}
+
+% External link command
+\newcommand{\externalLink}[2]{\href{#1}{#2\ \faExternalLink}}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyfoot{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+% Adjust margins
+\addtolength{\oddsidemargin}{-0.5in}
+\addtolength{\evensidemargin}{-0.5in}
+\addtolength{\textwidth}{1in}
+\addtolength{\topmargin}{-.5in}
+\addtolength{\textheight}{1.0in}
+
+\urlstyle{same}
+\raggedbottom
+\raggedright
+\setlength{\tabcolsep}{0in}
+
+\titleformat{\section}{
+  \vspace{-4pt}\scshape\raggedright\large
+}{}{0em}{}[\color{black}\titlerule \vspace{-5pt}]
+
+\pdfgentounicode=1
+
+% Custom resume commands
+\newcommand{\resumeItem}[1]{\item\small{{#1 \vspace{-2pt}}}}
+\newcommand{\resumeSubheading}[4]{
+  \vspace{-2pt}\item
+    \begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}
+      \textbf{#1} & #2 \\
+      \textit{\small#3} & \textit{\small #4} \\
+    \end{tabular*}\vspace{-7pt}
+}
+\newcommand{\resumeProjectHeading}[2]{
+    \item
+    \begin{tabular*}{0.97\textwidth}{l@{\extracolsep{\fill}}r}
+      \small#1 & #2 \\
+    \end{tabular*}\vspace{-7pt}
+}
+\newcommand{\resumeSubItem}[1]{\resumeItem{#1}\vspace{-4pt}}
+\renewcommand\labelitemii{$\vcenter{\hbox{\tiny$\bullet$}}$}
+\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0.15in, label={}]}
+\newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
+\newcommand{\resumeItemListStart}{\begin{itemize}}
+\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-5pt}}
+
+\begin{document}
+
+\begin{center}
+\vspace{-35 pt}
+\textbf{\Huge \scshape Sushil Kumar} \\ \vspace{1pt}
+9875446168 $||$ sushil13129340@gmail.com $||$ 
+\externalLink{https://www.linkedin.com/in/sushil1312/}{linkedin.com/in/sushil1312} $||$ \externalLink{https://github.com/SUSHIL1312}{github.com/sushil1312}
+\end{center}
+
+\vspace{-20 pt}
+
+\section{Skills}
+\begin{itemize}[leftmargin=0.15in, label={}]
+\small{\item{
+\textbf{Languages:} C\#, C/C++, Python, T-SQL, Java, JavaScript \\
+\textbf{Databases/Storage:} MySQL, SQL Server, Redis, NoSQL Concepts \\
+\textbf{Platforms/Core:} Linux, Android, Multithreading, IPC, Microservices, REST APIs, System Design, OOP \\
+\textbf{Data \& AI:} Machine Learning, Deep Learning, Generative AI, PyTorch, OpenCV, Computer Vision Pipelines \\
+\textbf{DevOps/Tools:} Kafka, RabbitMQ, Git, CI/CD, AWS, Jira, Visual Studio, D-Bus \\
+\textbf{Soft Skills:} Stakeholder Communication, Leadership, Root-Cause Analysis, Cross-functional Collaboration \\
+\vspace{2pt}
+\textbf{Professional Summary:} Software Engineer with \textbf{4 years of experience} specializing in core-service development, scalable APIs, and real-time data pipelines. Proven track record in architecting hybrid C\#/C++ systems and delivering high-impact AI solutions. Experienced in full-cycle development, mentoring, and collaborating with cross-functional teams to drive service health and performance.
+}}
+\end{itemize}
+
+\vspace{-20pt}
+\section{Experience}
+\resumeSubHeadingListStart
+
+\resumeSubheading
+{Samsung R\&D Institute, Delhi}{July 2022 -- Present}
+{Software Engineer}{Delhi, India}
+\vspace{-5pt}
+\resumeItemListStart
+
+\resumeItem{\textbf{Core-Service Architecture (SmartAV Daemon):} Led the architecture and design of a hybrid C++ and C\# daemon service to manage AV experiences. Re-architected legacy modules using \textbf{SOLID principles} and integrated 150+ APIs, resulting in a 20\% performance boost and a 25\% reduction in defects. Improved IPC via D-Bus, achieving a record SAM score of 4.85.}
+
+\resumeItem{\textbf{Real-Time Data Pipelines (SmartMirror App):} Engineered a real-time telemetry and analysis pipeline for the world’s first mirror-display hybrid \textbf{(CES 2025 Best of Innovation Award)}. Implemented high-performance computer vision pipelines using object detection (sub-70ms) and image segmentation (sub-150ms) to process on-device data streams.}
+
+\resumeItem{\textbf{Distributed Systems \& Synchronization (The Player App):} Developed an intelligent media player POC utilizing \textbf{WebSockets} for master-client synchronization. Designed timestamp alignment and drift correction algorithms to ensure low-latency, synchronous media playback across multiple nodes in a distributed environment.}
+
+\resumeItem{\textbf{AI Solutions \& Data Modeling:} Developed on-device \textbf{DeepLabV3+} models for pixel-level segmentation. Optimized inference latency using INT8 quantization and trained models on large-scale dermatology datasets, achieving ~70\% mean IoU. Integrated LLM-based capabilities for interactive data-driven user insights.}
+
+\resumeItem{\textbf{Service Enhancements \& Scalability:} Contributed to the development of 360-degree immersive audio with head tracking using C++ and BLE. Enhanced audio-visual preferences via MVC architecture, driving a 20\% increase in user satisfaction metrics through data-driven UI/UX refinements.}
+
+\resumeItemListEnd
+
+\resumeSubHeadingListEnd
+\vspace{-16pt}
+
+\section{Publications}
+\resumeSubHeadingListStart
+\resumeSubheading
+{Resolving Semantic Confusions for Improved Zero-Shot Detection}{BMVC-2022}
+{Lead Researcher / Author}{\externalLink{https://bmvc2022.mpi-inf.mpg.de/0347.pdf}{Paper link}}
+\resumeItemListStart
+\resumeItem{Proposed a novel framework using Faster-RCNN and Conditional WGANs to detect unseen object classes. Leveraged triplet and cyclic-consistency loss to address semantic confusion, achieving an 8\% relative mAP gain on MSCOCO.}
+\resumeItemListEnd
+\resumeSubHeadingListEnd
+
+\vspace{-16pt}
+\section{Education}
+\resumeSubHeadingListStart
+\resumeSubheading{Indian Institute of Technology (IIT), Guwahati}{2020 -- 2022}{Master of Technology (M.Tech) in Computer Science}{CGPA: 8.71}
+\resumeSubheading{Indian Institute of Information Technology (IIIT), Kalyani}{2015 -- 2019}{Bachelor of Technology (B.Tech) in Computer Science}{CGPA: 8.21}
+\resumeSubHeadingListEnd
+
+\vspace{-12pt}
+\section{Projects}
+\resumeSubHeadingListStart
+\resumeProjectHeading
+{\textbf{Multithreaded Banking System} $|$ \emph{C++, TCP/IP, Socket Programming}}{}
+\resumeItemListStart
+\resumeItem{Designed and implemented a high-concurrency server supporting 50+ simultaneous clients. Engineered a multithreaded architecture for efficient request processing, emphasizing thread safety and robust IPC.}
+\resumeItemListEnd
+\resumeSubHeadingListEnd
+
+\vspace{-12pt}
+\section{Achievements \& Leadership}
+\resumeSubHeadingListStart
+\resumeItemListStart
+\resumeItem{\textbf{GATE 2020:} Secured \textbf{All India Rank (AIR) 387} among 100,000+ candidates.}
+\resumeItem{\textbf{Samsung Spot Awards:} Recognized thrice (2023, twice in 2025) for exceptional project delivery and driving team impact.}
+\resumeItem{\textbf{Code Excellence:} Awarded \textbf{Best Code Review (2024)} at SRID for maintaining high-quality, scalable, and clean codebases.}
+\resumeItem{\textbf{Technical Proficiency:} Solved \textbf{800+ algorithmic problems} on LeetCode, InterviewBit, and GFG.}
+\resumeItem{\textbf{Teaching Assistantship:} Mentored students in Machine Learning, Deep Learning, and Computing Labs at IIT Guwahati.}
+\resumeItemListEnd
+\resumeSubHeadingListEnd
+
+\end{document}
+```

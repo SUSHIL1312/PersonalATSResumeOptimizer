@@ -1,0 +1,180 @@
+\documentclass[letterpaper,10 pt]{article}
+\usepackage{multicol}
+\usepackage{latexsym}
+\usepackage[empty]{fullpage}
+\usepackage{titlesec}
+\usepackage{marvosym}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{verbatim}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{fancyhdr}
+\usepackage[english]{babel}
+\usepackage{fontawesome} % ← added for external link icon
+\input{glyphtounicode}
+
+% External link command
+\newcommand{\externalLink}[2]{\href{#1}{#2\ \faExternalLink}}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyfoot{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+% Adjust margins
+\addtolength{\oddsidemargin}{-0.5in}
+\addtolength{\evensidemargin}{-0.5in}
+\addtolength{\textwidth}{1in}
+\addtolength{\topmargin}{-.5in}
+\addtolength{\textheight}{1.0in}
+
+\urlstyle{same}
+\raggedbottom
+\raggedright
+\setlength{\tabcolsep}{0in}
+
+\titleformat{\section}{
+  \vspace{-4pt}\scshape\raggedright\large
+}{}{0em}{}[\color{black}\titlerule \vspace{-5pt}]
+
+\pdfgentounicode=1
+
+% Custom resume commands
+\newcommand{\resumeItem}[1]{\item\small{{#1 \vspace{-2pt}}}}
+\newcommand{\resumeSubheading}[4]{
+  \vspace{-2pt}\item
+    \begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}
+      \textbf{#1} & #2 \\
+      \textit{\small#3} & \textit{\small #4} \\
+    \end{tabular*}\vspace{-7pt}
+}
+\newcommand{\resumeProjectHeading}[2]{
+    \item
+    \begin{tabular*}{0.97\textwidth}{l@{\extracolsep{\fill}}r}
+      \small#1 & #2 \\
+    \end{tabular*}\vspace{-7pt}
+}
+\newcommand{\resumeSubItem}[1]{\resumeItem{#1}\vspace{-4pt}}
+\renewcommand\labelitemii{$\vcenter{\hbox{\tiny$\bullet$}}$}
+\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0.15in, label={}]}
+\newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
+\newcommand{\resumeItemListStart}{\begin{itemize}}
+\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-5pt}}
+
+\begin{document}
+
+\begin{center}
+\vspace{-35 pt}
+\textbf{\Huge \scshape Sushil Kumar} \\ \vspace{1pt}
+9875446168 $||$ sushil13129340@gmail.com $||$ 
+\externalLink{https://www.linkedin.com/in/sushil1312/}{linkedin.com/in/sushil1312} $||$ \externalLink{https://github.com/SUSHIL1312}{github.com/sushil1312}
+\end{center}
+
+\vspace{-20 pt}
+
+
+
+\section{Skills}
+\begin{itemize}[leftmargin=0.15in, label={}]
+\small{\item{
+\textbf{Languages:} C/C++, C\#, Python  \\
+\textbf{Databases:} MySQL, SQL, Redis \\
+\textbf{Platforms:} Android, Linux  \\
+\textbf{Concepts:} OOP, Data Structure \& Algorithms, System Design, Operating System, Multithreading, IPC, Microservices, REST APIs, DBMS, Machine Learning, Deep Learning, LLMs, Generative AI, PyTorch  \\
+\textbf{DevOps/Tools:} Kafka, RabbitMQ, Git, GitHub, CI/CD, AWS, Jira, TeraTerm, Visual Studio, Confluence \\
+\textbf{Soft Skills:} Leadership, Innovation, Teamwork, Effective Communication, Root-Cause Analysis, Data-Driven Decision-Making \\
+\vspace{2pt}
+\textbf{Professional Summary:} Software Engineer with \textbf{$\sim$4 years of experience} in full-cycle development, system debugging, and rapid POC delivery. Experienced in leading teams, mentoring interns, and collaborating cross-functionally to build scalable, high-impact software solutions.
+}}
+\end{itemize}
+
+
+\vspace{-20pt}
+\section{Experience}
+\resumeSubHeadingListStart
+
+\resumeSubheading
+{Samsung R\&D Institute, Delhi - Software Engineer }{July 2022 - Present}
+{}{}
+\vspace{-18pt}
+\resumeItemListStart
+
+\resumeItem{\textbf{SmartMirror App \externalLink{https://www.ces.tech/ces-innovation-awards/2025/micro-led-beauty-mirror/}{(CES 2025 Best of Innovation Award)}:} Engineered an AI-powered MICRO LED smart mirror—the world’s first mirror-display hybrid—enabling real-time user detection (within 1 meter), advanced skin analysis, and personalized treatment recommendations.}
+
+\resumeItem{Implemented computer vision pipelines using object detection (DeviceCare, sub-70ms), image segmentation (sunscreen analysis, sub-150ms), and MediaPipe for face detection and tracking (sub-50ms), achieving real-time performance on-device.}
+
+\resumeItem{Integrated camera streaming, voice interaction, and LLM-based capabilities to deliver personalized insights on health (blood pressure, mental wellness), daily schedule, and product recommendations. Built on Linux and Android platforms.  \textit{[C++, C\#, Python]}}
+
+\resumeItem{\textbf{POCs for Skin Health:} Led development of on-device \textbf{DeepLabV3+} with MobileNetV3 backbone for multi-class segmentation of acne, wrinkles, and pores, enabling real-time pixel-level visual overlays with sub-120ms inference latency.}
+
+\resumeItem{Trained using a combination of public dermatology datasets ( Dermnet, ACNE04 ) and custom annotated data, achieving ~70\% mean IoU on a held-out test set and optimized inference latency using INT8 quantization. \hfill \textit{[Python, OpenCV]}}
+
+\resumeItem{\textbf{The Player App:} Developed an intelligent portable media player (POC) for CES that detects nearby users and estimates relative distance to optimize multimedia experiences. Designed real-time master-client synchronization using WebSockets with timestamp alignment and drift correction, ensuring low-latency, near-synchronous playback across multiple devices. Integrated LLM capabilities to enhance interactive media experiences. \hfill \textit{[C++, C\#]}}
+\resumeItem{\textbf{360 Degree audio support in Samsung Galaxy earbuds:} Contributed to the development of 360 degree immersive audio support with head tracking for Samsung Galaxy earbuds, enhancing the video and music experience. [C++, BLE]}
+
+\resumeItem{\textbf{Enhanced Audio and Visual experience in Samsung TV:} Enhanced audio-visual preferences for sports, movie, and general modes using MVC architecture, resulting in a 20\% increase in user satisfaction.}
+
+\resumeItem{\textbf{SmartAV Daemon:}Re-architected legacy C++ modules into a C++ \& C\# hybrid system with a daemon service to manage AV experiences on Samsung TV. Leveraged SOLID principles and integrated 150+ APIs to boost performance by 20\% and reduce bugs by 25\%.Improved IPC via D-Bus, achieving a SAM score of 4.85. [C++, C\#]}
+
+\resumeItemListEnd
+
+\resumeSubHeadingListEnd
+\vspace{-16pt}
+\section{Publications}
+\resumeSubHeadingListStart
+\resumeSubheading
+{Resolving Semantic Confusions for Improved Zero-Shot Detection}{BMVC-2022}
+{Published: Nov 24, 2022}{\externalLink{https://bmvc2022.mpi-inf.mpg.de/0347.pdf}{Paper link}}
+\resumeItemListStart
+\resumeItem{Proposed a novel zero-shot object detection framework using Faster-RCNN trained on limited classes. Leveraged a Conditional WGAN to generate synthetic visual features from word vectors, addressing semantic confusion through triplet and cyclic-consistency loss. Achieved an 8\% relative mAP gain over the next-best method for detecting unseen objects on MSCOCO.}
+\resumeItemListEnd
+\resumeSubHeadingListEnd
+
+\vspace{-16pt}
+\section{Education}
+2020--2022: \textbf{M.Tech} (Computer Science), \textbf{IIT Guwahati} \hfill (CGPA: 8.71)\\
+2015--2019: \textbf{B.Tech} (Computer Science), \textbf{IIIT Kalyani} \hfill (CGPA: 8.21)\\
+
+\vspace{-10pt}
+\section{Projects}
+\resumeSubHeadingListStart
+
+\resumeSubheading
+{Banking System}{\externalLink{https://github.com/SUSHIL1312/Banking_System}{GitHub}}
+{}{}
+\vspace{-15pt}
+\resumeItemListStart
+\resumeItem{Built a banking system using C++ and TCP socket programming, supporting 50+ concurrent clients by designing a multithreaded client-server architecture for efficient request processing and communication.}\resumeItemListEnd
+
+
+
+\resumeSubHeadingListEnd
+
+\vspace{-10pt}
+\section{Achievements \& Extracurricular Activities}
+\resumeSubHeadingListStart
+
+\resumeItemListStart
+\resumeItem{Secured \textbf{AIR 387} among 100K candidates who appeared in \textbf{GATE 2020 }examination.}
+\resumeItem{Solved over \textbf{800 coding problems} on platforms: 
+\externalLink{https://leetcode.com/u/dark_knight9340/}{LeetCode}, 
+\externalLink{https://www.interviewbit.com/profile/sushil1312/}{InterviewBit}, 
+\externalLink{https://www.geeksforgeeks.org/user/sushil90350/}{GFG}.}
+
+\resumeItem{Awarded Best Code Review in 2024 for writing high-quality, efficient, scalable, and clean code at SRID.}
+
+\resumeItem{\textbf{Spot Award (2023; twice in 2025)} at SRI-Delhi for exceptional contributions to project delivery and team impact.}
+
+
+\resumeItem{Completed NPTEL Online Certification in Algorithm and Analysis with a 97\% score.}
+\resumeItem{\textbf{Teaching Assistant }for Computing Lab (CS 110), Machine Learning \& Deep Learning (CS 590) course at IIT Guwahati.}
+
+
+
+
+\resumeItemListEnd
+
+\resumeSubHeadingListEnd
+
+\end{document}
