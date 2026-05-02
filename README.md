@@ -60,6 +60,27 @@ Install one of the following:
 * **Windows** → MiKTeX
 * **Linux** → TeX Live
 
+
+# Install Homebrew (if not already)
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+# Install BasicTeX (light LaTeX)
+brew install --cask basictex
+
+# Add LaTeX to PATH
+echo 'export PATH="/Library/TeX/texbin:$PATH"' >> ~/.zshrc
+source ~/.zshrc
+
+# Update LaTeX manager
+sudo tlmgr update --self
+
+# Install required packages
+sudo tlmgr install collection-latexrecommended
+sudo tlmgr install fontawesome enumitem hyperref
+
+# Verify installation
+pdflatex --version
+
 Verify installation:
 
 ```bash
