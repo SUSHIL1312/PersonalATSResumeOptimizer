@@ -1,255 +1,89 @@
+# 🚀 ATS Resume Optimizer Pro
 
-# 🚀 ATS Resume Optimizer (Python + Gemini + LaTeX)
+A highly advanced, AI-powered desktop application built with Python and CustomTkinter that automatically tailors your LaTeX resume to any Job Description (JD) to maximize your ATS (Applicant Tracking System) score.
 
-A desktop application that helps you **optimize your resume based on a Job Description (JD)** and evaluate it using a realistic **ATS (Applicant Tracking System) score**.
+It supports dual AI engines (**Google Gemini** & **OpenAI ChatGPT**) and provides a production-ready, dual-pane environment to preview, edit, and rebuild your optimized resumes on the fly.
 
 ---
 
 ## ✨ Features
 
-- 🤖 AI-powered Resume Optimization (Gemini)
-- 📊 ATS Score based on **parsed PDF (realistic approach)**
-- 🎯 Profile-based behavior:
-  - **IT** → strict (no fake skills added)
-  - **MBA** → flexible (JD-aligned optimization)
-- 📁 Organized output 
-- 🖥️ Modern GUI (CustomTkinter)
-- 🔐 One-time Gemini API key setup
+- **🤖 Dual AI Engines**: Switch seamlessly between Gemini and ChatGPT.
+- **🎯 Intelligent Tailoring**: Aggressively aligns MBA resumes with the JD, while strictly locking hard tech skills for IT profiles to prevent hallucinations.
+- **📈 Live ATS Scoring**: Uses advanced synonym matching, stop-word filtering, and n-gram analysis to accurately score your resume against the JD.
+- **🖥️ Dual-Pane Workstation**: View your inputs on the left and a live LaTeX editor/preview on the right.
+- **⚙️ Instant PDF Rebuilding**: Edit the AI-generated LaTeX directly in the app and click "Save & Rebuild PDF" to recompile and instantly rescore your resume.
+- **📂 Automated Organization**: Automatically saves your optimized `.tex` and `.pdf` files into tidy folders structured by `Profile/Company/Date`.
 
 ---
 
-## ⚙️ Setup Instructions
+## 🛠️ Prerequisites
 
-### 🧪 1. Create Virtual Environment
+Before installing the python packages, you **MUST** have a working LaTeX distribution installed on your system because the application uses `pdflatex` to compile the PDF files in the background.
 
+- **Mac**: Install [BasicTeX](https://tug.org/mactex/morepackages.html) (or run `brew install --cask basictex` as it is much smaller than full MacTeX)
+- **Windows**: Install [MiKTeX](https://miktex.org/download) or [TeX Live](https://tug.org/texlive/)
+- **Linux**: Run `sudo apt-get install texlive-full`
+
+---
+
+## 💻 Setup & Installation
+
+Follow these steps to set up the project on your local machine.
+
+### 1. Clone the Repository
 ```bash
-python -m venv atsOptimize
-````
+git clone <your-repo-url>
+cd PersonalATSResumeOptimizer
+```
 
----
-
-### ▶️ 2. Activate Environment
-
-#### 💻 Mac / Linux
-
+### 2. Create a Virtual Environment
+It is highly recommended to use a virtual environment to keep dependencies isolated.
 ```bash
-source atsOptimize/bin/activate
+# Create the virtual environment named "atsResumeEnv"
+python3 -m venv atsResumeEnv
 ```
 
-#### 🪟 Windows
-
+### 3. Activate the Virtual Environment
+**On Mac / Linux:**
 ```bash
-atsOptimize\Scripts\activate
+source atsResumeEnv/bin/activate
 ```
+**On Windows:**
+```cmd
+atsResumeEnv\Scripts\activate
+```
+*(You will know it is activated when you see `(atsResumeEnv)` at the beginning of your terminal prompt).*
 
----
-
-### 📦 3. Install Dependencies
-
+### 4. Install Dependencies
+With the virtual environment activated, install all required packages:
 ```bash
-pip install customtkinter google-generativeai pymupdf
+pip install -r requirements.txt
 ```
 
 ---
 
-### 📄 4. Install LaTeX (Required)
+## 🚀 Running the Application
 
-Install one of the following:
-
-* **Mac** → MacTeX
-* **Windows** → MiKTeX
-* **Linux** → TeX Live
-
-
-# Install Homebrew (if not already)
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-
-# Install BasicTeX (light LaTeX)
-brew install --cask basictex
-
-# Add LaTeX to PATH
-echo 'export PATH="/Library/TeX/texbin:$PATH"' >> ~/.zshrc
-source ~/.zshrc
-
-# Update LaTeX manager
-sudo tlmgr update --self
-
-# Install required packages
-sudo tlmgr install collection-latexrecommended
-sudo tlmgr install fontawesome enumitem hyperref
-
-# Verify installation
-pdflatex --version
-
-Verify installation:
-
-```bash
-pdflatex --version
-```
-
----
-
-## 🔑 Gemini API Setup
-
-1. Go to:
-   👉 [https://aistudio.google.com/app/apikey](https://aistudio.google.com/app/apikey)
-
-2. Generate an API key
-
-3. Run the app and click:
-
-```
-Set API Key
-```
-
-4. Paste your key (stored locally in `config.json`)
-
----
-
-## 📂 Project Structure
-
-```
-ats_resume_optimizer/
-│
-├── main.py
-├── ai_engine.py
-├── ats_engine.py
-├── pdf_engine.py
-├── pdf_parser.py
-├── config.json
-│
-├── input/
-│   └── defaultResume.tex
-│
-├── output/
-│   └── YYYY-MM-DD/
-```
-
----
-
-## 📄 Input Resume Format
-
-Place your resume in:
-
-```
-input/defaultResume.tex
-```
-
-### Example:
-
-```latex
-\documentclass{article}
-\begin{document}
-
-\section*{Experience}
-...
-
-\section*{Projects}
-...
-
-\section*{Skills}
-C++, Java, Python
-
-\end{document}
-```
-
----
-
-### ⚠️ Important
-
-* Maintain **valid LaTeX syntax**
-* Use proper environments (`itemize`, `enumerate`)
-* Avoid broken commands like:
-
-  ```
-  \resumeItem (outside itemize)
-  ```
-
----
-
-## ▶️ Run the Application
+Once your dependencies are installed, you can launch the app:
 
 ```bash
 python main.py
 ```
 
----
-
-## 🧑‍💻 How to Use
-
-1. Launch the app
-2. Paste Job Description
-3. Select:
-
-   * Profile (IT / MBA)
-   * Experience
-4. Enter Company Name
-5. (Optional) Add Remarks
+### 🔑 Setting up API Keys
+1. When the app opens, look for the **"Set Gemini Key"** (or **"Set ChatGPT Key"**) button in the left panel.
+2. Click it, paste your API key, and click Save. 
+3. The app securely stores this in a local `config.json` file. You can switch between AI models using the dropdown, and the app will remember both keys independently.
 
 ---
 
-### 🔘 Optimize Resume
-
-* Generates optimized resume
-* Converts to PDF
-* Calculates ATS score
-
----
-
-### 🔘 Check Default ATS
-
-* Calculates ATS score of your original resume
-
----
-
-## 📦 Output
-
-Generated files are stored in:
-
-```
-output/YYYY-MM-DD/
-```
-
-Example:
-
-```
-output/2026-05-02/Google_IT_1714647382.pdf
-```
-
----
-
-## 📊 ATS Scoring Logic
-
-* Extracts text from PDF
-* Matches keywords with JD
-* Checks presence of sections:
-
-  * Skills
-  * Experience
-  * Projects
-
----
-
-## ⚠️ Notes
-
-* ATS score depends on PDF parsing (real-world behavior)
-* Complex layouts may reduce parsing accuracy
-* Ensure LaTeX compiles successfully
-
----
-
-## 🚀 Future Improvements
-
-* Resume diff viewer (before vs after)
-* Keyword highlighting
-* ATS improvement explanation
-* Web-based SaaS version
-
----
-
-## 🤝 Contributing
-
-Feel free to fork and improve this project.
-
-
-
+## 📁 Directory Structure
+- `main.py`: The main GUI application.
+- `ai_engine.py`: Handles all API communication and strict prompting logic for Gemini/ChatGPT.
+- `ats_engine.py`: The algorithm that calculates the ATS score.
+- `pdf_engine.py`: The bridge that talks to your system's `pdflatex` compiler.
+- `pdf_parser.py`: Extracts and reads text from PDFs.
+- `input/defaultResume.tex`: Your base, un-optimized resume template.
+- `assets/`: Contains UI assets like the app logo.
+- `output/`: Where all your neatly organized, company-specific tailored resumes are saved!

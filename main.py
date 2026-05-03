@@ -4,8 +4,9 @@ import os
 import json
 from datetime import datetime
 import time
+from PIL import Image
 
-from ai_engine import optimize_resume_with_gemini
+from ai_engine import optimize_resume_with_gemini, optimize_resume_with_chatgpt
 from ats_engine import calculate_ats_score
 from pdf_engine import generate_pdf
 from pdf_parser import extract_text_from_pdf
@@ -13,188 +14,370 @@ from pdf_parser import extract_text_from_pdf
 # ---------------- CONFIG ---------------- #
 CONFIG_FILE = "config.json"
 
-def load_api_key():
+def load_api_key(model="Gemini"):
+    key_name = "gemini_key" if model == "Gemini" else "openai_key"
     if os.path.exists(CONFIG_FILE):
         with open(CONFIG_FILE, "r") as f:
-            return json.load(f).get("gemini_key")
+            return json.load(f).get(key_name)
     return None
 
-def save_api_key(key):
+def save_api_key(model, key):
+    data = {}
+    if os.path.exists(CONFIG_FILE):
+        with open(CONFIG_FILE, "r") as f:
+            data = json.load(f)
+            
+    key_name = "gemini_key" if model == "Gemini" else "openai_key"
+    data[key_name] = key
+    
     with open(CONFIG_FILE, "w") as f:
-        json.dump({"gemini_key": key}, f)
+        json.dump(data, f)
 
 # ---------------- API KEY POPUP ---------------- #
 def set_api_key_popup():
+    model = ai_model_var.get()
+    
     def save():
         key = entry.get()
         if key:
-            save_api_key(key)
+            save_api_key(model, key)
             popup.destroy()
             update_api_button()
 
     popup = ctk.CTkToplevel(root)
-    popup.title("Set API Key")
+    popup.title(f"Set {model} API Key")
     popup.geometry("400x150")
 
-    entry = ctk.CTkEntry(popup, width=300, placeholder_text="Enter Gemini API Key")
+    entry = ctk.CTkEntry(popup, width=300, placeholder_text=f"Enter {model} API Key")
+    
+    current_key = load_api_key(model)
+    if current_key:
+        entry.insert(0, current_key)
+        
     entry.pack(pady=20)
 
     ctk.CTkButton(popup, text="Save", command=save).pack()
 
 # ---------------- UPDATE BUTTON ---------------- #
-def update_api_button():
-    if load_api_key():
-        api_btn.configure(text="Change API Key")
+def update_api_button(*args):
+    try:
+        model = ai_model_var.get()
+    except NameError:
+        model = "Gemini"
+    if load_api_key(model):
+        api_btn.configure(text=f"Change {model} Key")
     else:
-        api_btn.configure(text="Set API Key")
+        api_btn.configure(text=f"Set {model} Key")
+
+# ---------------- LOGGING ---------------- #
+def log_msg(msg):
+    def update():
+        result_console.configure(state="normal")
+        result_console.insert("end", f"[{datetime.now().strftime('%H:%M:%S')}] {msg}\n")
+        result_console.configure(state="disabled")
+        result_console.see("end")
+    root.after(0, update)
 
 # ---------------- DEFAULT ATS ---------------- #
 def check_default_ats():
-    jd = jd_text.get("1.0", "end")
+    jd = jd_text.get("1.0", "end").strip()
 
-    if not jd.strip():
-        result_label.configure(text="Enter JD first")
+    if not jd or jd == "Enter Job Description here...":
+        log_msg("⚠️ Enter JD first")
         return
 
-    try:
-        default_tex = "input/defaultResume.tex"
+    def task():
+        try:
+            log_msg("⏳ Building and checking Default ATS...")
+            default_tex = "input/defaultResume.tex"
+            generate_pdf(default_tex)
+            default_pdf = "input/defaultResume.pdf"
+            text = extract_text_from_pdf(default_pdf)
 
-        # Generate PDF in same folder
-        generate_pdf(default_tex)
+            if not text:
+                log_msg("❌ PDF parsing failed")
+                return
 
-        default_pdf = "input/defaultResume.pdf"
+            score = calculate_ats_score(jd, text)
+            log_msg(f"✅ Default ATS Score: {score}%")
 
-        text = extract_text_from_pdf(default_pdf)
+        except Exception as e:
+            log_msg(f"❌ Error: {str(e)}")
 
-        if not text:
-            result_label.configure(text="PDF parsing failed")
-            return
+    threading.Thread(target=task, daemon=True).start()
 
-        score = calculate_ats_score(jd, text)
+# ---------------- LOAD PDF ATS ---------------- #
+def load_and_check_pdf():
+    jd = jd_text.get("1.0", "end").strip()
+    if not jd or jd == "Enter Job Description here...":
+        log_msg("⚠️ Enter Job Description first")
+        return
 
-        result_label.configure(text=f"Default ATS Score: {score}%")
+    file_path = ctk.filedialog.askopenfilename(
+        title="Select Resume PDF",
+        filetypes=[("PDF Files", "*.pdf")]
+    )
+    if not file_path:
+        return
 
-    except Exception as e:
-        result_label.configure(text=str(e))
+    def task():
+        try:
+            log_msg(f"⏳ Analyzing {os.path.basename(file_path)}...")
+            text = extract_text_from_pdf(file_path)
+            if not text:
+                log_msg("❌ PDF parsing failed or file is empty")
+                return
+                
+            score = calculate_ats_score(jd, text)
+            log_msg(f"✅ Loaded PDF ATS Score: {score}%")
+        except Exception as e:
+            log_msg(f"❌ Error reading PDF: {str(e)}")
+
+    threading.Thread(target=task, daemon=True).start()
 
 # ---------------- OPTIMIZATION ---------------- #
 def run_optimizer():
-    jd = jd_text.get("1.0", "end")
+    def reenable_btn():
+        optimize_btn.configure(state="normal", text="🚀 Optimize Resume")
+
+    jd = jd_text.get("1.0", "end").strip()
     profile = profile_var.get()
     exp = exp_entry.get()
-    remarks = remarks_text.get("1.0", "end")
+    remarks = remarks_text.get("1.0", "end").strip()
     company = company_entry.get()
 
-    if not jd.strip():
-        result_label.configure(text="Enter Job Description")
+    if not jd or jd == "Enter Job Description here...":
+        root.after(0, lambda: [log_msg("⚠️ Enter Job Description"), reenable_btn()])
         return
+        
+    if remarks == "Enter Remarks here...":
+        remarks = ""
 
-    api_key = load_api_key()
+    selected_model = ai_model_var.get()
+    api_key = load_api_key(selected_model)
     if not api_key:
-        result_label.configure(text="Set API Key first")
+        root.after(0, lambda: [log_msg(f"⚠️ Set {selected_model} API Key first"), reenable_btn()])
         return
 
     try:
+        log_msg(f"⏳ Calling {selected_model} for optimization...")
         with open("input/defaultResume.tex") as f:
             resume = f.read()
 
-        # -------- GEMINI -------- #
-        optimized = optimize_resume_with_gemini(
-            resume, jd, profile, exp, remarks, api_key
-        )
+        # -------- AI OPTIMIZATION -------- #
+        if selected_model == "Gemini":
+            optimized = optimize_resume_with_gemini(
+                resume, jd, profile, exp, remarks, api_key
+            )
+        else:
+            optimized = optimize_resume_with_chatgpt(
+                resume, jd, profile, exp, remarks, api_key
+            )
+        
+        # -------- INSTANT ATS -------- #
+        score = calculate_ats_score(jd, optimized)
 
         # -------- SAVE FILE -------- #
-        date_folder = datetime.now().strftime("%Y-%m-%d")
-        os.makedirs(f"output/{date_folder}", exist_ok=True)
+        timestamp = datetime.now().strftime("%y%m%d_%H%M")
+        comp_name = company.strip() if company.strip() else "UnknownCompany"
+        output_dir = f"output/{profile}/{comp_name}"
+        os.makedirs(output_dir, exist_ok=True)
 
-        filename = f"{company}_{profile}_{int(time.time())}"
-
-        tex_path = f"output/{date_folder}/{filename}.tex"
+        filename = f"{timestamp}_{profile}"
+        tex_path = f"{output_dir}/{filename}.tex"
+        
+        global current_tex_path
+        current_tex_path = tex_path
 
         with open(tex_path, "w") as f:
             f.write(optimized)
+            
+        def update_editor():
+            editor.delete("1.0", "end")
+            editor.insert("1.0", optimized)
 
-        # -------- GENERATE PDF -------- #
-        generate_pdf(tex_path)
+        # Update UI instantly before generating PDF
+        root.after(0, lambda: [log_msg(f"✅ Optimized ATS Score: {score}%\n⏳ Building PDF in background..."), update_editor()])
 
-        pdf_path = tex_path.replace(".tex", ".pdf")
+        # -------- GENERATE PDF IN BACKGROUND -------- #
+        def build_pdf_task():
+            try:
+                generate_pdf(tex_path)
+                root.after(0, lambda: log_msg(f"🎉 Saved: {filename}.pdf"))
+            except Exception as e:
+                root.after(0, lambda: log_msg(f"❌ PDF Error: {str(e)}"))
+            finally:
+                root.after(0, reenable_btn)
 
-        # -------- ATS FROM PDF -------- #
-        pdf_text = extract_text_from_pdf(pdf_path)
-
-        if not pdf_text:
-            result_label.configure(text="PDF parsing failed")
-            return
-
-        score = calculate_ats_score(jd, pdf_text)
-
-        result_label.configure(
-            text=f"Optimized ATS Score: {score}%\nSaved: {filename}.pdf"
-        )
+        pdf_thread = threading.Thread(target=build_pdf_task)
+        pdf_thread.daemon = True
+        pdf_thread.start()
 
     except Exception as e:
-        result_label.configure(text=str(e))
+        err_msg = str(e)
+        root.after(0, lambda m=err_msg: [log_msg(f"❌ Error: {m}"), reenable_btn()])
 
 # ---------------- THREAD WRAPPER ---------------- #
 def run_thread():
-    threading.Thread(target=run_optimizer).start()
+    optimize_btn.configure(state="disabled", text="⏳ Working...")
+    thread = threading.Thread(target=run_optimizer)
+    thread.daemon = True
+    thread.start()
 
 # ---------------- UI ---------------- #
 ctk.set_appearance_mode("dark")
 ctk.set_default_color_theme("blue")
 
 root = ctk.CTk()
-root.title("ATS Resume Optimizer")
-root.geometry("900x700")
+root.title("ATS Resume Optimizer Pro")
+root.geometry("1300x800")
+
+# Create Main Frames
+left_pane = ctk.CTkFrame(root, width=500)
+left_pane.pack(side="left", fill="y", padx=10, pady=10)
+
+right_pane = ctk.CTkFrame(root)
+right_pane.pack(side="right", fill="both", expand=True, padx=10, pady=10)
+
+# ================= LEFT PANE ================= #
+# Logo
+try:
+    logo_img = ctk.CTkImage(Image.open("assets/logo.png"), size=(80, 80))
+    logo_label = ctk.CTkLabel(left_pane, image=logo_img, text="")
+    logo_label.pack(pady=(10, 0))
+except Exception as e:
+    print("Logo load error:", e)
 
 # Title
-title = ctk.CTkLabel(root, text="ATS Resume Optimizer", font=("Arial", 24))
-title.pack(pady=10)
+title = ctk.CTkLabel(left_pane, text="ATS Resume Optimizer Pro", font=("Arial", 28, "bold"))
+title.pack(pady=5)
+
+ctk.CTkLabel(left_pane, text="Job Description", font=("Arial", 16, "bold")).pack(pady=(10, 0))
 
 # JD Input
-jd_text = ctk.CTkTextbox(root, height=150)
-jd_text.pack(padx=20, pady=10, fill="x")
+jd_text = ctk.CTkTextbox(left_pane, height=150)
+jd_text.pack(padx=20, pady=5, fill="x")
+jd_text.insert("1.0", "Enter Job Description here...")
+jd_text.bind("<FocusIn>", lambda e: jd_text.delete("1.0", "end") if jd_text.get("1.0", "end-1c") == "Enter Job Description here..." else None)
+jd_text.bind("<FocusOut>", lambda e: jd_text.insert("1.0", "Enter Job Description here...") if not jd_text.get("1.0", "end-1c").strip() else None)
+
+ctk.CTkLabel(left_pane, text="Candidate Details", font=("Arial", 16, "bold")).pack(pady=(10, 0))
 
 # Input Frame
-frame = ctk.CTkFrame(root)
-frame.pack(padx=20, pady=10, fill="x")
+frame = ctk.CTkFrame(left_pane)
+frame.pack(padx=20, pady=5, fill="x")
 
 profile_var = ctk.StringVar(value="IT")
+ai_model_var = ctk.StringVar(value="Gemini")
 
-ctk.CTkOptionMenu(frame, variable=profile_var, values=["IT", "MBA"]).grid(row=0, column=0, padx=10)
+ctk.CTkOptionMenu(frame, variable=profile_var, values=["IT", "MBA"]).grid(row=0, column=0, padx=5)
 
-exp_entry = ctk.CTkEntry(frame, placeholder_text="Years of Experience")
-exp_entry.grid(row=0, column=1, padx=10)
+ctk.CTkOptionMenu(frame, variable=ai_model_var, values=["Gemini", "ChatGPT"], command=update_api_button).grid(row=0, column=1, padx=5)
 
-company_entry = ctk.CTkEntry(frame, placeholder_text="Company Name")
-company_entry.grid(row=0, column=2, padx=10)
+exp_entry = ctk.CTkEntry(frame, placeholder_text="Years of Experience", width=120)
+exp_entry.grid(row=0, column=2, padx=5)
 
-api_btn = ctk.CTkButton(frame, text="", command=set_api_key_popup)
-api_btn.grid(row=0, column=3, padx=10)
+company_entry = ctk.CTkEntry(frame, placeholder_text="Company Name", width=120)
+company_entry.grid(row=0, column=3, padx=5)
+
+api_btn = ctk.CTkButton(frame, text="", command=set_api_key_popup, width=120)
+api_btn.grid(row=0, column=4, padx=5)
+
+ctk.CTkLabel(left_pane, text="Additional Remarks", font=("Arial", 16, "bold")).pack(pady=(10, 0))
 
 # Remarks
-remarks_text = ctk.CTkTextbox(root, height=100)
-remarks_text.pack(padx=20, pady=10, fill="x")
+remarks_text = ctk.CTkTextbox(left_pane, height=100)
+remarks_text.pack(padx=20, pady=5, fill="x")
+remarks_text.insert("1.0", "Enter Remarks here...")
+remarks_text.bind("<FocusIn>", lambda e: remarks_text.delete("1.0", "end") if remarks_text.get("1.0", "end-1c") == "Enter Remarks here..." else None)
+remarks_text.bind("<FocusOut>", lambda e: remarks_text.insert("1.0", "Enter Remarks here...") if not remarks_text.get("1.0", "end-1c").strip() else None)
 
 # Buttons Frame
-btn_frame = ctk.CTkFrame(root)
-btn_frame.pack(pady=10)
+btn_frame = ctk.CTkFrame(left_pane)
+btn_frame.pack(pady=15)
 
-ctk.CTkButton(
+optimize_btn = ctk.CTkButton(
     btn_frame,
-    text="Optimize Resume",
+    text="🚀 Optimize Resume",
+    fg_color="#4CAF50",
+    hover_color="#45A049",
+    font=("Arial", 14, "bold"),
+    height=40,
     command=run_thread
-).grid(row=0, column=0, padx=10)
+)
+optimize_btn.grid(row=0, column=0, padx=5)
 
 ctk.CTkButton(
     btn_frame,
     text="Check Default ATS",
+    font=("Arial", 14, "bold"),
+    height=40,
     command=check_default_ats
-).grid(row=0, column=1, padx=10)
+).grid(row=0, column=1, padx=5)
 
-# Result
-result_label = ctk.CTkLabel(root, text="", font=("Arial", 16))
-result_label.pack(pady=20)
+ctk.CTkButton(
+    btn_frame,
+    text="Load PDF ATS",
+    font=("Arial", 14, "bold"),
+    height=40,
+    command=load_and_check_pdf
+).grid(row=0, column=2, padx=5)
+
+# Result Console
+result_console = ctk.CTkTextbox(left_pane, height=120, font=("Courier", 14), state="disabled")
+result_console.pack(padx=20, pady=10, fill="both", expand=True)
+
+# ================= RIGHT PANE ================= #
+current_tex_path = None
+
+preview_label = ctk.CTkLabel(right_pane, text="📄 LaTeX Editor & Preview", font=("Arial", 20, "bold"))
+preview_label.pack(pady=10)
+
+editor = ctk.CTkTextbox(right_pane, font=("Courier", 12))
+editor.pack(fill="both", expand=True, padx=10, pady=5)
+
+def rebuild_edited_pdf():
+    if not current_tex_path:
+        log_msg("⚠️ No resume generated to rebuild!")
+        return
+        
+    text = editor.get("1.0", "end").strip()
+    if not text:
+        return
+        
+    def task():
+        try:
+            log_msg("⏳ Saving and Rebuilding PDF...")
+            with open(current_tex_path, "w") as f:
+                f.write(text)
+            
+            generate_pdf(current_tex_path)
+            
+            # Recalculate ATS
+            jd = jd_text.get("1.0", "end").strip()
+            pdf_path = current_tex_path.replace(".tex", ".pdf")
+            pdf_text = extract_text_from_pdf(pdf_path)
+            if pdf_text and jd and jd != "Enter Job Description here...":
+                score = calculate_ats_score(jd, pdf_text)
+                log_msg(f"✅ Rebuilt! New ATS Score: {score}%")
+            else:
+                log_msg(f"🎉 Rebuilt successfully!")
+                
+        except Exception as e:
+            log_msg(f"❌ Rebuild Error: {str(e)}")
+            
+    threading.Thread(target=task, daemon=True).start()
+
+rebuild_btn = ctk.CTkButton(
+    right_pane, 
+    text="⚙️ Save & Rebuild PDF", 
+    fg_color="#008CBA",
+    hover_color="#007399",
+    font=("Arial", 16, "bold"),
+    height=40,
+    command=rebuild_edited_pdf
+)
+rebuild_btn.pack(pady=10)
 
 # Initialize API button state
 update_api_button()
