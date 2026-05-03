@@ -93,11 +93,11 @@ Return ONLY LaTeX.
 
 
 # ---------------- MAIN FUNCTION (GEMINI) ---------------- #
-def optimize_resume_with_gemini(resume, jd, profile, exp, remarks, api_key):
+def optimize_resume_with_gemini(resume, jd, profile, exp, remarks, api_key, model_name="gemini-1.5-flash"):
     import google.generativeai as genai
     genai.configure(api_key=api_key)
 
-    model = genai.GenerativeModel("gemini-flash-latest")
+    model = genai.GenerativeModel(model_name)
 
     prompt = build_prompt(resume, jd, profile, exp, remarks)
 
@@ -106,14 +106,14 @@ def optimize_resume_with_gemini(resume, jd, profile, exp, remarks, api_key):
     return clean_latex(response.text)
 
 # ---------------- MAIN FUNCTION (CHATGPT) ---------------- #
-def optimize_resume_with_chatgpt(resume, jd, profile, exp, remarks, api_key):
+def optimize_resume_with_chatgpt(resume, jd, profile, exp, remarks, api_key, model_name="gpt-4o-mini"):
     import openai
     
     client = openai.OpenAI(api_key=api_key)
     prompt = build_prompt(resume, jd, profile, exp, remarks)
     
     response = client.chat.completions.create(
-        model="gpt-4o-mini",
+        model=model_name,
         messages=[
             {"role": "system", "content": "You are an expert ATS Resume Optimizer. Only return raw LaTeX code. Do not include markdown blocks or any other conversational text."},
             {"role": "user", "content": prompt}

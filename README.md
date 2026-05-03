@@ -75,7 +75,8 @@ python main.py
 1. When the app opens, look for the **"Set Gemini Key"** (or **"Set ChatGPT Key"**) button in the left panel.
 2. Click it, paste your API key, and click Save. 
 3. The app securely stores this in a local `config.json` file. You can switch between AI models using the dropdown, and the app will remember both keys independently.
-
+Currently Gemini working:  " gemini-flash-latest"
+(may chnage in future)
 ---
 
 ## 📁 Directory Structure

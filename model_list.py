@@ -1,6 +1,17 @@
 import google.generativeai as genai
+import json
+import os
 
-genai.configure(api_key="AIzaSyDfm8poXWInS30HGCaf9i5WV9iIil67yYw")
+api_key = None
+if os.path.exists("config.json"):
+    with open("config.json", "r") as f:
+        api_key = json.load(f).get("gemini_key")
+
+if not api_key:
+    print("Error: No gemini_key found in config.json")
+    exit(1)
+
+genai.configure(api_key=api_key)
 
 models = genai.list_models()
 

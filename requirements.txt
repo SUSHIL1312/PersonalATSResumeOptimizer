@@ -1,5 +1,7 @@
 customtkinter>=5.2.0
-google-generativeai>=0.3.0
-PyMuPDF>=1.23.0
+google-generativeai
+pdfminer.six
+customtkinter
 Pillow>=10.0.0
 openai>=1.0.0
+PyMuPDF
