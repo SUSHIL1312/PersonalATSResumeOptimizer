@@ -1,8 +1,4 @@
-Here’s your **updated, production-quality `README.md`** with all requested improvements added cleanly and professionally 👇
 
----
-
-````markdown
 # 🚀 ATS Resume Optimizer Pro
 
 A highly advanced, AI-powered desktop application built with Python and CustomTkinter that automatically tailors your LaTeX resume to any Job Description (JD) to maximize your ATS (Applicant Tracking System) score.
@@ -243,6 +239,8 @@ PersonalATSResumeOptimizer/
 
 ## 📄 Resume Input Format
 
+You can update the defaultResume form the UI too. 
+
 Your base resume must be in:
 
 ```
@@ -301,7 +299,4 @@ Feel free to fork and improve this project.
 ## ⭐ Support
 
 If you found this useful, consider giving it a ⭐ on GitHub!
-
-```
-
 
